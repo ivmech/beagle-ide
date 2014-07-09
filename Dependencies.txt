@@ -1,0 +1,7 @@
+openssl
+dtach
+python2.7-dev
+python-pip
+python-tornado
+python-dateutil
+python-django

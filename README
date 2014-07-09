@@ -1,0 +1,90 @@
+Beagleboard IDE is a web based integrated development environment for Beagleboard.
+Beagleboard IDE that is based on Ace Editor (http://ace.ajax.org/) and inspired from Neutron IDE
+
+Beagleboard IDE was created to be a web IDE that satisfies the following:
+  1. Is free and open source
+  2. Is able to code into Beagleboard easily and quickly.
+  2. Is able to install on an existing Beagleboard server for both performance and privacy of your code.
+  3. Is easy to install and secure out of the box.
+
+Beagleboard IDE has the following features:
+  * Syntax highlighting
+  * Auto indentation and outdent
+  * Themes
+  * File browser
+  * Tabbed interface
+  * Search and Replace in current tab, all tabs, or in a directory
+  * Terminal Emulator
+
+--- Notes on terminal ---
+Ctrl-W may close browser tab and send nothing to the terminal.
+Ctrl-T may send transpose signal to editor and not open new browser tab if editor was clicked.
+
+################
+--- INSTALL ---
+################
+
+Debian/Ubuntu Base Dependencies
+---
+sudo apt-get install openssl dtach python2.7-dev python-pip python-tornado python-dateutil python-django
+
+
+Python Pip Requirements
+---
+sudo pip install -r Requirements.txt
+
+
+Beagleide Installation
+---
+python setup.py install
+
+Enter username for Django superuser
+Enter email for Django superuser
+Enter password for Django superuser
+
+
+
+################
+--- USAGE ---
+################
+
+Starting Daemon
+---
+cd Beagle-IDE/beagle
+./beagleide.py start
+
+
+Starting Foreground
+---
+cd Beagle-IDE/beagle
+./beagleide.py -l -f -n start
+
+
+Enter the IDE
+---
+http://localhost:7000
+
+
+Settings After Installation
+---
+BASE Path should be specified from user preferences.
+http://localhost:7000/admin/auth/user/1/
+
+It should be specified full path.
+Example: /home/ubuntu/Beagle-IDE/BASE
+
+HTTP_PORT can be changed from settings.py
+
+
+
+################
+--- CLEANING ---
+################
+Beagleide Soft Clean
+---
+python setup.py clean
+
+
+Beagleide Hard Clean All
+---
+python setup.py cleanall
