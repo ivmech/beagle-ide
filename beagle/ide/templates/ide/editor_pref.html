@@ -1,0 +1,85 @@
+{% extends "ide/master_iframe.html" %}
+{% block content %}
+<form action="" method="post" class="pref_form">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <td>
+        {% if form.errors.uitheme %}{{ form.errors.uitheme }}{% endif %}
+        Arayuz Temasi: {{ form.uitheme }}
+      </td>
+      <td>
+        {% if form.errors.theme %}{{ form.errors.theme }}{% endif %}
+        Editor Temasi: {{ form.theme }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {% if form.errors.keybind %}{{ form.errors.keybind }}{% endif %}
+        Tus Secimi: {{ form.keybind }}
+      </td>
+      <td>
+        {% if form.errors.swrap %}{{ form.errors.swrap }}{% endif %}
+        Hafif Sarma: {{ form.swrap }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {% if form.errors.fontsize %}{{ form.errors.fontsize }}{% endif %}
+        Font Boyutu: {{ form.fontsize }}
+      </td>
+      <td>
+        {% if form.errors.tabsize %}{{ form.errors.tabsize }}{% endif %}
+        Tab Boyutu: {{ form.tabsize }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <table>
+          <tr>
+            <td>
+              {{ form.hactive }} <label for="id_hactive">Aktif Satiri Belirt</label>
+            </td>
+            <td>
+              {{ form.hword }} <label for="id_hword">Aktif Kelimeyi Belirt</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.invisibles }} <label for="id_invisibles">Gizli Dosyalari Goster</label>
+            </td>
+            <td>
+              {{ form.gutter }} <label for="id_gutter">Show Gutter</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.pmargin }} <label for="id_pmargin">Yazilabilir Alani Goster</label>
+            </td>
+            <td>
+              {{ form.softab }} <label for="id_softab">Hafif Tab Kullan</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.behave }} <label for="id_behave">Davranislar</label>
+            </td>
+            <td>{{ form.save_session }} <label for="id_save_session">Save Session</label></td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.splitterm }} <label for="id_splitterm">Split Terminal/IDE Ayirici</label>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <input type="submit" name="task" value="Save"/>
+      </td>
+    </tr>
+  </table>
+</form>
+{% endblock %}

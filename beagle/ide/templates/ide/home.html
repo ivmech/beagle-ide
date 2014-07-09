@@ -1,0 +1,138 @@
+{% extends "ide/master.html" %}{% load ntags %}
+{% block head %}
+{% with pref=request.user.preferences %}
+<script type="text/javascript">
+  var pref = {
+    uitheme: '{{ pref.uitheme }}',
+    
+    theme: '{{ pref.theme }}',
+    fontsize: '{{ pref.fontsize }}',
+    keybind: '{{ pref.keybind }}',
+    swrap: '{{ pref.swrap }}',
+    tabsize: {{ pref.tabsize }},
+    
+    hactive: {{ pref.hactive|js_bool }},
+    hword: {{ pref.hword|js_bool }},
+    invisibles: {{ pref.invisibles|js_bool }},
+    gutter: {{ pref.gutter|js_bool }},
+    pmargin: {{ pref.pmargin|js_bool }},
+    softab: {{ pref.softab|js_bool }},
+    behave: {{ pref.behave|js_bool }},
+    
+    save_session: {{ pref.save_session|js_bool }},
+  };
+  
+  var init_session = {{ pref.last_session|safe }};
+  var skip_session = true;
+  var basedir = "{{ pref.basedir }}";
+  var loaded_themes = ['{{ pref.theme }}'];
+  var static_url = '{{ STATIC_URL }}';
+  var track_ajax = {% if request.track %}true{% else %}false{% endif %};
+  
+  {% if pref.splitterm and TERMINAL_ON %}
+  var splitterm = true;
+  {% else %}
+  var splitterm = false;
+  {% endif %}
+</script>
+
+<style type="text/css">
+  .ace_editor { font-size: {{ pref.fontsize }}; }
+</style>
+{% endwith %}
+{% endblock %}
+{% block content %}
+<div id="beagle_ui">
+  <div id="beagle_menubar">
+    <span id="logo" class="logo" style="float:left;">{{ idename }}</span>
+			<div class="buttons" style="float:left;">
+  				<a href="javascript: void(0)" class="button" onclick="new_stuff('{{ d }}', '{{ dir|escapejs }}', '{{ did }}')"><span class="icon icon68"></span><span class="label">Yeni</span></a>
+  				<a href="javascript: void(0)" class="button"><span class="icon icon189"></span><span class="label">Yükle</span></a>
+  				<a href="javascript: void(0)" class="button" onClick="SaveCurrentTab()"><span class="icon icon67"></span><span class="label">Kaydet</span></a>
+  				<a href="javascript: void(0)" class="button" onClick="SaveAll()"><span class="icon icon67"></span><span class="label">Hepsini Kaydet</span></a>
+  				<a href="javascript: void(0)" class="button" onclick="send_command()"><span class="icon icon96"></span><span class="label">Çalıştır</span></a>
+				<a href="javascript: void(0)" class="button" id="menu_button" onclick="return show_menu()" style="top:0px;"><span class="icon icon98"></span><span class="label"></span></a>
+			</div>
+<!--    <button class="k-button" onclick="SaveCurrentTab()">Save</button>
+    <button class="k-button" onclick="SaveAll()">Save All</button>
+    <button class="k-button" onclick="CloseAll()">Close All</button>
+    <button id="menu_button" class="k-button" onclick="return show_menu()"><img src="{{ STATIC_URL }}ide/img/menu.png" alt="Menu" title="Menu"/></button>
+-->
+    <div style="display: inline-block"><input type="text" id="quick_search"/></div>
+    <div id="current_edit">Merhaba... {{ idename }}</div>
+    <div id="status"></div>
+  </div>
+  <div id="beagle_body">
+    <div id="splitter">
+      <div id="splitter_left">
+        <div id="tooltabs">
+          <div>
+            <div id="file_browser">
+              <a href="javascript: void(0)"><b>Dosya Yonetici</b></a>
+              <div class="inner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="splitter_right" style="height: 100%;">
+        {% if request.user.preferences.splitterm and TERMINAL_ON %}
+        <div id="ide_top">
+          <div id="tabs">
+            <div id="tabsinner">
+              <ul></ul>
+        <div id="find"></div>
+            </div>
+          </div>
+          <div id="editor_global"></div>
+        </div>
+        <div id="ide_bottom">
+
+          <!--<iframe width="100%" height="300" frameBorder="0" scrolling="auto" src="/terminal/"></iframe>-->
+        </div>
+        {% else %}
+        <div id="tabs">
+          <div id="tabsinner">
+            <ul></ul>
+          </div>
+        </div>
+        <div id="editor_global"></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% include "ide/right_menu_dir.html" %}
+{% endblock %}
+{% block footer %}
+<div id="main_menu">
+  <ul>
+    <li><a href="javascript: void(0)" onclick="show_pref()" class="pref">Editor Ayarlari</a></li>
+    <li class="btop">
+      <span class="submenu">
+        <span class="arrow">&raquo;</span>Editor Modu
+        <ul class="emodes">
+          {% for mode in MODES %}<li><a href="javascript: void(0)" onclick="set_editor_mode('{{ mode.0 }}')">{{ mode.1 }}</a></li>
+          {% endfor %}
+        </ul>
+        <div class="clear"></div>
+      </span>
+    </li>
+    <li class="btop">
+      <span class="submenu">
+        <span class="arrow">&raquo;</span>Yardim! 
+        <ul>
+          <li><a href="https://github.com/pizzapanther/beagle-IDE/wiki/Default-Key-Bindings" target="_blank" class="link">Tus Ayarlari</a></li>
+          <li><a href="https://github.com/pizzapanther/beagle-IDE/wiki/Emacs-Key-Bindings" target="_blank" class="link">EMacs Ayari</a></li>
+          <li><a href="https://github.com/pizzapanther/beagle-IDE/wiki/Vim-Key-Bindings" target="_blank" class="link">Vim Ayari</a></li>
+          <li><a href="http://www.ivmech.com/" target="_blank" class="link">ivmech.com</a></li>
+        </ul>
+      </span>
+    </li>
+    {% if TERMINAL_ON %}
+    <li><a href="{% url ide-terminal %}" target="_blank" class="term">Terminal</a></li>
+    <li><a href="javascript: void(0)" onclick="window.open('{% url ide-terminal %}', '_blank', 'height=400,width=650,location=no,menubar=no,status=no,titlebar=no,toolbar=no,top=0,left=0')" class="term">Terminal (Pencere)</a></li>
+    {% endif %}
+    <li><a href="javascript: void(0)" onclick="about()" class="about">Hakkinda</a></li>
+  </ul>
+</div>
+{% endblock %}
